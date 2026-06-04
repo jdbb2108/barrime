@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400&display=swap');
+
+/* ─── Variables de diseño — dark + rosa ─────────────────────────────────── */
+:root {
+  --bg:        #000000;   /* negro puro */
+  --surface:   #0D0D0D;   /* cards */
+  --surface2:  #161616;   /* inputs / hover */
+  --border:    #1F1F1F;   /* bordes muy sutiles */
+  --border2:   #2E2E2E;   /* bordes visibles */
+  --t1:        #FFFFFF;   /* blanco puro — máximo contraste */
+  --t2:        #888888;   /* gris medio */
+  --t3:        #444444;   /* gris oscuro / placeholders */
+  --pink:      #FF00B0;   /* rosa neón — títulos y detalles clave */
+  --pink-soft: #FF66CC;   /* rosa suave */
+  --pink-bg:   #0D0008;   /* fondo con tinte rosa muy oscuro */
+}
+
+/* ─── Base ───────────────────────────────────────────────────────────────── */
+@layer base {
+  html {
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--t1);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  * { box-sizing: border-box; }
+
+  ::selection {
+    background-color: #4A1535;
+    color: var(--t1);
+  }
+}
+
+/* ─── Componentes ────────────────────────────────────────────────────────── */
+@layer components {
+
+  /* Botón primario — blanco sobre negro */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2
+           px-7 py-3.5 min-h-[48px] rounded-2xl text-[15px] font-medium
+           active:scale-[0.97] transition-all duration-200;
+    background-color: #FFFFFF;
+    color: #000000;
+  }
+  .btn-primary:hover {
+    background-color: #F0F0F0;
+  }
+
+  /* Botón ghost */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2
+           px-7 py-3.5 min-h-[48px] rounded-2xl text-[15px] font-medium
+           active:scale-[0.97] transition-all duration-200;
+    border: 1px solid var(--border2);
+    color: var(--t2);
+  }
+  .btn-ghost:hover {
+    border-color: #FFFFFF;
+    color: #FFFFFF;
+  }
+
+  /* Card */
+  .card {
+    @apply rounded-3xl p-6 md:p-8;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+  }
+
+  /* Label de sección */
+  .section-label {
+    @apply w-fit rounded-full px-3 py-1 text-xs font-semibold tracking-[0.14em] uppercase;
+    background: color-mix(in srgb, var(--pink) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--pink) 32%, var(--border));
+    color: var(--pink-soft);
+  }
+
+  /* Input base */
+  .input-base {
+    @apply w-full rounded-2xl px-4 py-3 text-[15px] transition-colors;
+    background-color: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--t1);
+  }
+  .input-base::placeholder { color: var(--t3); }
+  .input-base:focus {
+    outline: none;
+    border-color: var(--pink);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--pink) 15%, transparent);
+  }
+}
+
+/* ─── Utilidades ─────────────────────────────────────────────────────────── */
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+}
+
+/* Ocultar scrollbar en carruseles */
+.overflow-x-auto::-webkit-scrollbar { display: none; }
+.overflow-x-auto { -ms-overflow-style: none; scrollbar-width: none; }
