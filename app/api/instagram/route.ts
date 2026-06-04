@@ -27,6 +27,8 @@ type BeholdResponse =
       };
     };
 
+const DEFAULT_BEHOLD_FEED_ID = "gUngiAN09NZvGX8VR45m";
+
 function getPosts(data: BeholdResponse) {
   if (Array.isArray(data)) return data;
   if (Array.isArray(data.posts)) return data.posts;
@@ -35,7 +37,10 @@ function getPosts(data: BeholdResponse) {
 }
 
 export async function GET() {
-  const feedId = process.env.BEHOLD_FEED_ID ?? process.env.NEXT_PUBLIC_BEHOLD_FEED_ID;
+  const feedId =
+    process.env.BEHOLD_FEED_ID ??
+    process.env.NEXT_PUBLIC_BEHOLD_FEED_ID ??
+    DEFAULT_BEHOLD_FEED_ID;
 
   if (!feedId) {
     return NextResponse.json(

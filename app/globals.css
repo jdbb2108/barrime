@@ -114,13 +114,13 @@
 .ethereal-field {
   position: absolute;
   inset: -18vh -12vw;
-  opacity: 0.68;
-  filter: url("#ethereal-shadow-filter") saturate(1.1);
+  opacity: 0.92;
+  filter: url("#ethereal-shadow-filter") saturate(1.2);
   background:
-    radial-gradient(ellipse at 18% 12%, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.08) 18%, transparent 42%),
-    radial-gradient(ellipse at 78% 22%, rgba(255, 0, 176, 0.26) 0%, rgba(255, 0, 176, 0.09) 24%, transparent 52%),
-    radial-gradient(ellipse at 44% 58%, rgba(255, 102, 204, 0.18) 0%, rgba(255, 102, 204, 0.06) 28%, transparent 58%),
-    radial-gradient(ellipse at 72% 82%, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.04) 20%, transparent 48%);
+    radial-gradient(ellipse at 18% 12%, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.11) 18%, transparent 42%),
+    radial-gradient(ellipse at 78% 22%, rgba(255, 0, 176, 0.42) 0%, rgba(255, 0, 176, 0.16) 24%, transparent 52%),
+    radial-gradient(ellipse at 44% 58%, rgba(255, 102, 204, 0.28) 0%, rgba(255, 102, 204, 0.09) 28%, transparent 58%),
+    radial-gradient(ellipse at 72% 82%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.06) 20%, transparent 48%);
   mask-image:
     radial-gradient(ellipse at 50% 8%, black 0%, transparent 48%),
     radial-gradient(ellipse at 48% 46%, black 0%, transparent 62%),
@@ -144,8 +144,8 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(to bottom, rgba(0,0,0,0.28), rgba(0,0,0,0.72) 58%, #000000 100%),
-    radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.56) 78%);
+    linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.5) 58%, #000000 100%),
+    radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.42) 78%);
 }
 
 @keyframes ethereal-drift {

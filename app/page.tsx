@@ -66,6 +66,7 @@ function LandingContent() {
   return (
     <div className="relative isolate">
       <EtherealBackground />
+      <div className="relative z-10">
       <VisitTracker refSlug={refSlug} source={source} path="/" />
 
       <button
@@ -154,6 +155,7 @@ function LandingContent() {
       </div>
 
       <Footer />
+      </div>
     </div>
   );
 }
