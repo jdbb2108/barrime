@@ -232,7 +232,7 @@ export default function ResponseForm({ refSlug, source }: Props) {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setServerError(data?.error ?? "Algo salió mal. Intenta de nuevo.");
+        setServerError(data?.error ?? "Revisa la respuesta e intenta de nuevo.");
         setSubmitting(false);
         return;
       }
@@ -493,3 +493,4 @@ export default function ResponseForm({ refSlug, source }: Props) {
     </section>
   );
 }
+

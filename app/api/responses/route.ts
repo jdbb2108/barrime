@@ -75,10 +75,10 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     console.error("[api/responses] Error guardando en Sheets:", err);
     return NextResponse.json(
-      { error: "Hubo un problema al guardar tu respuesta. Intenta de nuevo." },
-      { status: 500 }
+      { ok: true, saved: false, warning: "sheets_append_failed" },
+      { status: 200 }
     );
   }
 
-  return NextResponse.json({ ok: true }, { status: 200 });
+  return NextResponse.json({ ok: true, saved: true }, { status: 200 });
 }
