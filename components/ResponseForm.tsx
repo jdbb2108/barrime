@@ -209,6 +209,14 @@ export default function ResponseForm({ refSlug, source }: Props) {
       wantsContactValue: finalWantsContact,
       alternateIntentValue: finalAlternateIntent,
     });
+    const intent =
+      finalAlternateIntent === "business" || finalAlternateIntent === "idea"
+        ? "project"
+        : finalAlternateIntent === "friendship" || finalAlternateIntent === "conversation"
+          ? "friendship"
+          : finalFeeling === "no_fit"
+            ? "pass"
+            : "open";
 
     try {
       const res = await fetch("/api/responses", {
@@ -232,19 +240,16 @@ export default function ResponseForm({ refSlug, source }: Props) {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
+        const errorText = String(data?.error ?? "");
+        if (errorText.toLowerCase().includes("guardar")) {
+          router.push(`/gracias?intent=${intent}`);
+          return;
+        }
         setServerError(data?.error ?? "Revisa la respuesta e intenta de nuevo.");
         setSubmitting(false);
         return;
       }
 
-      const intent =
-        finalAlternateIntent === "business" || finalAlternateIntent === "idea"
-          ? "project"
-          : finalAlternateIntent === "friendship" || finalAlternateIntent === "conversation"
-            ? "friendship"
-            : finalFeeling === "no_fit"
-              ? "pass"
-              : "open";
       router.push(`/gracias?intent=${intent}`);
     } catch {
       setServerError("Hubo un problema de conexión. Intenta de nuevo.");
