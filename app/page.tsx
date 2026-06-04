@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState, Suspense } from "react";
 
 import HeroSection from "@/components/HeroSection";
+import EtherealBackground from "@/components/EtherealBackground";
 import ResumenSection from "@/components/ResumenSection";
 import ContextSection from "@/components/ContextSection";
 import AboutJoseSection from "@/components/AboutJoseSection";
@@ -63,7 +64,8 @@ function LandingContent() {
   }
 
   return (
-    <div className="relative">
+    <div className="relative isolate">
+      <EtherealBackground />
       <VisitTracker refSlug={refSlug} source={source} path="/" />
 
       <button

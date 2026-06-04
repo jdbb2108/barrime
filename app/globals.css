@@ -33,6 +33,7 @@
     color: var(--t1);
     font-size: 16px;
     line-height: 1.6;
+    overflow-x: hidden;
   }
 
   * { box-sizing: border-box; }
@@ -109,3 +110,55 @@
 /* Ocultar scrollbar en carruseles */
 .overflow-x-auto::-webkit-scrollbar { display: none; }
 .overflow-x-auto { -ms-overflow-style: none; scrollbar-width: none; }
+
+.ethereal-field {
+  position: absolute;
+  inset: -18vh -12vw;
+  opacity: 0.68;
+  filter: url("#ethereal-shadow-filter") saturate(1.1);
+  background:
+    radial-gradient(ellipse at 18% 12%, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.08) 18%, transparent 42%),
+    radial-gradient(ellipse at 78% 22%, rgba(255, 0, 176, 0.26) 0%, rgba(255, 0, 176, 0.09) 24%, transparent 52%),
+    radial-gradient(ellipse at 44% 58%, rgba(255, 102, 204, 0.18) 0%, rgba(255, 102, 204, 0.06) 28%, transparent 58%),
+    radial-gradient(ellipse at 72% 82%, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.04) 20%, transparent 48%);
+  mask-image:
+    radial-gradient(ellipse at 50% 8%, black 0%, transparent 48%),
+    radial-gradient(ellipse at 48% 46%, black 0%, transparent 62%),
+    radial-gradient(ellipse at 64% 92%, black 0%, transparent 42%);
+  mask-composite: add;
+  animation: ethereal-drift 24s ease-in-out infinite alternate;
+}
+
+.ethereal-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.08;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.12) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.75), transparent 72%);
+}
+
+.ethereal-vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(0,0,0,0.28), rgba(0,0,0,0.72) 58%, #000000 100%),
+    radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.56) 78%);
+}
+
+@keyframes ethereal-drift {
+  0% {
+    transform: translate3d(-2%, -1%, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(2%, 1.5%, 0) scale(1.05);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ethereal-field {
+    animation: none;
+  }
+}
