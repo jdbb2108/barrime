@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 type MediaType = "IMAGE" | "VIDEO" | "CAROUSEL_ALBUM";
 
