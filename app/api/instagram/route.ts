@@ -1,24 +1,40 @@
 import { NextResponse } from "next/server";
 
-export const revalidate = 3600; // refresca el cache cada hora
+export const revalidate = 3600;
+
+type MediaType = "IMAGE" | "VIDEO" | "CAROUSEL_ALBUM";
 
 interface BeholdPost {
   id: string;
-  mediaType: "IMAGE" | "VIDEO" | "CAROUSEL_ALBUM";
-  mediaUrl: string;
+  mediaType?: MediaType;
+  media_type?: MediaType;
+  mediaUrl?: string;
+  media_url?: string;
   thumbnailUrl?: string;
-  permalink: string;
+  thumbnail_url?: string;
+  permalink?: string;
   caption?: string;
-  timestamp: string;
-  prunedCaption?: string;
+  timestamp?: string;
 }
 
-interface BeholdFeed {
-  posts: BeholdPost[];
+type BeholdResponse =
+  | BeholdPost[]
+  | {
+      posts?: BeholdPost[];
+      feed?: {
+        posts?: BeholdPost[];
+      };
+    };
+
+function getPosts(data: BeholdResponse) {
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data.posts)) return data.posts;
+  if (Array.isArray(data.feed?.posts)) return data.feed.posts;
+  return [];
 }
 
 export async function GET() {
-  const feedId = process.env.BEHOLD_FEED_ID;
+  const feedId = process.env.BEHOLD_FEED_ID ?? process.env.NEXT_PUBLIC_BEHOLD_FEED_ID;
 
   if (!feedId) {
     return NextResponse.json(
@@ -33,20 +49,27 @@ export async function GET() {
     });
 
     if (!res.ok) {
-      throw new Error(`Behold respondió con ${res.status}`);
+      throw new Error(`Behold respondio con ${res.status}`);
     }
 
-    const data: BeholdFeed = await res.json();
+    const data = (await res.json()) as BeholdResponse;
 
-    // Devolver solo los primeros 9 posts con los campos que necesitamos
-    const posts = (data.posts ?? []).slice(0, 9).map((p) => ({
-      id: p.id,
-      type: p.mediaType,
-      thumb: p.thumbnailUrl ?? p.mediaUrl,
-      url: p.permalink,
-      caption: p.caption?.slice(0, 120) ?? "",
-      date: p.timestamp,
-    }));
+    const posts = getPosts(data)
+      .slice(0, 9)
+      .map((p) => {
+        const mediaUrl = p.mediaUrl ?? p.media_url ?? "";
+        const thumbnailUrl = p.thumbnailUrl ?? p.thumbnail_url;
+
+        return {
+          id: p.id,
+          type: p.mediaType ?? p.media_type ?? "IMAGE",
+          thumb: thumbnailUrl ?? mediaUrl,
+          url: p.permalink ?? "",
+          caption: p.caption?.slice(0, 120) ?? "",
+          date: p.timestamp ?? "",
+        };
+      })
+      .filter((post) => post.id && post.thumb && post.url);
 
     return NextResponse.json({ posts }, { status: 200 });
   } catch (err) {
