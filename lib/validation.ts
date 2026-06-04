@@ -10,9 +10,8 @@ const VALID_FEELINGS = [
 
 const VALID_CONTACT_METHODS = [
   "instagram",
-  "call",
   "coffee",
-  "walk",
+  "gym",
   "other",
   "thinking",
 ];

@@ -7,9 +7,8 @@ export type Feeling =
 
 export type ContactMethod =
   | "instagram"
-  | "call"
   | "coffee"
-  | "walk"
+  | "gym"
   | "other"
   | "thinking";
 

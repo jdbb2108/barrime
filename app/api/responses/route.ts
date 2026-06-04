@@ -5,6 +5,14 @@ import { checkRateLimit } from "@/lib/rateLimit";
 import { sanitizeText, getClientIp, nowISO } from "@/lib/utils";
 import type { ResponsePayloadRaw } from "@/types/response";
 
+function getResponsesRange() {
+  const configured = process.env.GOOGLE_SHEETS_RESPONSES_RANGE;
+  if (!configured) return "Responses!A:O";
+
+  // Older deployments used A:K. The current payload writes 15 columns.
+  return configured.replace(/!A:K$/i, "!A:O");
+}
+
 export async function POST(request: NextRequest) {
   // 1. Rate limiting — la IP nunca se guarda en Sheets
   const ip = getClientIp(request);
@@ -60,10 +68,7 @@ export async function POST(request: NextRequest) {
   ];
 
   try {
-    await appendRow(
-      process.env.GOOGLE_SHEETS_RESPONSES_RANGE ?? "Responses!A:O",
-      row
-    );
+    await appendRow(getResponsesRange(), row);
   } catch (err) {
     console.error("[api/responses] Error guardando en Sheets:", err);
     return NextResponse.json(

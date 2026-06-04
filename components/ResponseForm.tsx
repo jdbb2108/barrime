@@ -21,9 +21,8 @@ const FEELINGS: { value: Feeling; label: string; emoji: string }[] = [
 
 const CONTACT_METHODS: { value: ContactMethod; label: string; emoji: string }[] = [
   { value: "instagram", label: "Instagram primero",  emoji: "📱" },
-  { value: "call",      label: "Una llamada corta",  emoji: "📞" },
   { value: "coffee",    label: "Un café",            emoji: "☕" },
-  { value: "walk",      label: "Caminar",            emoji: "🚶" },
+  { value: "gym",       label: "Entrenar en gimnasio", emoji: "🏋️" },
   { value: "other",     label: "Otro plan",          emoji: "💡" },
   { value: "thinking",  label: "Prefiero pensarlo",  emoji: "💭" },
 ];
