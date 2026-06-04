@@ -35,7 +35,10 @@ export async function POST(request: NextRequest) {
   // 3. Validar
   const errors = validateResponse(body);
   if (errors.length > 0) {
-    return NextResponse.json({ errors }, { status: 422 });
+    return NextResponse.json(
+      { error: errors[0]?.message ?? "Revisa la respuesta e intenta de nuevo.", errors },
+      { status: 422 }
+    );
   }
 
   // 4. Sanitizar texto libre

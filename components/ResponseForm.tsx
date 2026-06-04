@@ -49,6 +49,31 @@ function wantsContact(w: WantsContact | "") {
   return w === "yes" || w === "yes_instagram";
 }
 
+function needsConsentForResponse({
+  contactValue,
+  projectName,
+  projectStage,
+  projectChallenge,
+  wantsContactValue,
+  alternateIntentValue,
+}: {
+  contactValue: string;
+  projectName: string;
+  projectStage: string;
+  projectChallenge: string;
+  wantsContactValue: WantsContact | "";
+  alternateIntentValue: AlternateIntent | "";
+}) {
+  return Boolean(
+    contactValue ||
+      projectName ||
+      projectStage ||
+      projectChallenge ||
+      wantsContact(wantsContactValue) ||
+      ["friendship", "business", "idea", "conversation"].includes(alternateIntentValue)
+  );
+}
+
 const stepAnchors: Record<Step, string> = {
   1: "response-step-1",
   2: "response-step-2",
@@ -176,13 +201,14 @@ export default function ResponseForm({ refSlug, source }: Props) {
     const finalProjectChallenge = overrides?.projectChallenge ?? projectChallenge.trim();
     const finalNote = overrides?.note ?? note.trim();
     const finalConsent = overrides?.consent ?? consent;
-    const needsConsent =
-      finalContactValue ||
-      finalProjectName ||
-      finalProjectStage ||
-      finalProjectChallenge ||
-      wantsContact(finalWantsContact) ||
-      ["friendship", "business", "idea", "conversation"].includes(finalAlternateIntent);
+    const needsConsent = needsConsentForResponse({
+      contactValue: finalContactValue,
+      projectName: finalProjectName,
+      projectStage: finalProjectStage,
+      projectChallenge: finalProjectChallenge,
+      wantsContactValue: finalWantsContact,
+      alternateIntentValue: finalAlternateIntent,
+    });
 
     try {
       const res = await fetch("/api/responses", {
@@ -238,6 +264,15 @@ export default function ResponseForm({ refSlug, source }: Props) {
       consent: false,
     });
   }
+
+  const submitNeedsConsent = needsConsentForResponse({
+    contactValue: contactValue.trim(),
+    projectName: projectName.trim(),
+    projectStage: projectStage.trim(),
+    projectChallenge: projectChallenge.trim(),
+    wantsContactValue: wContact,
+    alternateIntentValue: alternateIntent,
+  });
 
   return (
     <section id="response-form" ref={formRef} className="py-12 px-5">
@@ -440,7 +475,7 @@ export default function ResponseForm({ refSlug, source }: Props) {
               <button
                 type="button"
                 onClick={() => submit()}
-                disabled={submitting || !feeling || !consent}
+                disabled={submitting || !feeling || (submitNeedsConsent && !consent)}
                 className="flex-1 btn-primary disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {submitting ? (
