@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import EtherealBackground from "@/components/EtherealBackground";
 import ThankYouMessage from "@/components/ThankYouMessage";
 
 export const metadata: Metadata = {
@@ -18,8 +19,11 @@ export default async function GraciasPage({ searchParams }: Props) {
       : "open";
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-cream px-4 py-16">
-      <ThankYouMessage intent={safeIntent} />
+    <main className="relative isolate flex min-h-screen items-center justify-center px-4 py-16">
+      <EtherealBackground />
+      <div className="relative z-10">
+        <ThankYouMessage intent={safeIntent} />
+      </div>
     </main>
   );
 }

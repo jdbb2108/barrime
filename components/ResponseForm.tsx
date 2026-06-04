@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Feeling, ContactMethod, WantsContact, AlternateIntent } from "@/types/response";
 
@@ -49,6 +49,14 @@ function isOpen(f: Feeling | "") {
 function wantsContact(w: WantsContact | "") {
   return w === "yes" || w === "yes_instagram";
 }
+
+const stepAnchors: Record<Step, string> = {
+  1: "response-step-1",
+  2: "response-step-2",
+  3: "response-step-3",
+  4: "response-step-4",
+  5: "response-step-5",
+};
 
 function Q({ children }: { children: React.ReactNode }) {
   return (
@@ -113,6 +121,7 @@ function Divider({ label }: { label: string }) {
 
 export default function ResponseForm({ refSlug, source }: Props) {
   const router = useRouter();
+  const formRef = useRef<HTMLElement>(null);
 
   const [step, setStep]                 = useState<Step>(1);
   const [feeling, setFeeling]           = useState<Feeling | "">("");
@@ -131,7 +140,15 @@ export default function ResponseForm({ refSlug, source }: Props) {
   function next(n: Step) {
     setStep(n);
     setTimeout(() => {
-      document.getElementById("response-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      const target = document.getElementById(stepAnchors[n]);
+      const top = target
+        ? target.getBoundingClientRect().top + window.scrollY - 96
+        : (formRef.current?.getBoundingClientRect().top ?? 0) + window.scrollY - 96;
+
+      window.scrollTo({
+        top: Math.max(0, top),
+        behavior: "smooth",
+      });
     }, 80);
   }
 
@@ -224,7 +241,7 @@ export default function ResponseForm({ refSlug, source }: Props) {
   }
 
   return (
-    <section id="response-form" className="py-12 px-5">
+    <section id="response-form" ref={formRef} className="py-12 px-5">
       <div className="max-w-reading mx-auto flex flex-col gap-5">
 
         <div className="flex flex-col gap-2">
@@ -240,7 +257,7 @@ export default function ResponseForm({ refSlug, source }: Props) {
         <div className="card flex flex-col gap-6">
 
           {/* Paso 1 — Sensación */}
-          <div className="flex flex-col gap-3">
+          <div id="response-step-1" className="flex flex-col gap-3 scroll-mt-24">
             <Q>Después de ver esto, ¿qué sensación te quedó?</Q>
             <div className="flex flex-col gap-2">
               {FEELINGS.map(f => (
@@ -264,7 +281,7 @@ export default function ResponseForm({ refSlug, source }: Props) {
           {/* Paso 2 — Modo de contacto */}
           {step >= 2 && isOpen(feeling) && (<>
             <Divider label="si habláramos" />
-            <div className="flex flex-col gap-3">
+            <div id="response-step-2" className="flex flex-col gap-3 scroll-mt-24">
               <Q>¿Qué te haría sentir más cómoda?</Q>
               <div className="flex flex-col gap-2">
                 {CONTACT_METHODS.map(m => (
@@ -280,7 +297,7 @@ export default function ResponseForm({ refSlug, source }: Props) {
           {/* Paso 3 — Señal */}
           {step >= 3 && isOpen(feeling) && (<>
             <Divider label="contacto" />
-            <div className="flex flex-col gap-3">
+            <div id="response-step-3" className="flex flex-col gap-3 scroll-mt-24">
               <Q>¿Quieres dejarme una señal?</Q>
               <p className="text-sm leading-relaxed" style={{ color: "#FFFFFF" }}>
                 Puedes dejar tu Instagram o una forma de contacto si te nace. No tienes
@@ -300,7 +317,7 @@ export default function ResponseForm({ refSlug, source }: Props) {
           {/* Paso 4 — Alternativa si no hay match */}
           {step >= 4 && feeling === "no_fit" && (<>
             <Divider label="otra puerta" />
-            <div className="flex flex-col gap-3">
+            <div id="response-step-4" className="flex flex-col gap-3 scroll-mt-24">
               <Q>Aunque no haya match, ¿te haría sentido conectar desde otro lugar?</Q>
               <p className="text-sm leading-relaxed" style={{ color: "#FFFFFF" }}>
                 También me interesa conocer personas interesantes, hacer amistades reales
@@ -329,7 +346,7 @@ export default function ResponseForm({ refSlug, source }: Props) {
 
           {/* Paso 5 — Proyecto o contacto */}
           {step >= 5 && ["business", "idea"].includes(alternateIntent) && (
-            <div className="flex flex-col gap-4">
+            <div id="response-step-5" className="flex flex-col gap-4 scroll-mt-24">
               <Divider label="proyecto" />
               <Q>Cuéntame rápido qué estás construyendo.</Q>
               <input
@@ -357,7 +374,7 @@ export default function ResponseForm({ refSlug, source }: Props) {
           )}
 
           {step >= 5 && (isOpen(feeling) || ["friendship", "conversation", "business", "idea"].includes(alternateIntent)) && (
-            <div className="flex flex-col gap-3">
+            <div id={!["business", "idea"].includes(alternateIntent) ? "response-step-5" : undefined} className="flex flex-col gap-3 scroll-mt-24">
               <Q>Instagram o forma de contacto.</Q>
               <input
                 type="text"
