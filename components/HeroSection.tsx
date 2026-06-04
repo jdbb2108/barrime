@@ -37,7 +37,7 @@ export default function HeroSection({ onScrollToResumen, onScrollToContext }: Pr
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-5">
             <div className="flex flex-wrap items-center gap-3">
-              <p className="section-label">Una presentación privada</p>
+              <p className="section-label">Una forma distinta de presentarme</p>
               <span
                 className="hidden h-px w-12 sm:block"
                 style={{ backgroundColor: "var(--border2)" }}
@@ -68,12 +68,13 @@ export default function HeroSection({ onScrollToResumen, onScrollToContext }: Pr
           <div className="flex max-w-[620px] flex-col gap-4" style={{ color: "#FFFFFF" }}>
             <p className="text-[17px] leading-[1.8]">
               Se me ocurrió hacer esta vuelta como una forma distinta de presentarme.
-              Y si estás leyendo esto, probablemente me llamaste la atención.
+              Si estás leyendo esto, puede ser porque me llamaste la atención o porque
+              un amigo en común cree que hay cositas.
             </p>
             <p className="text-[17px] leading-[1.8]">
               La idea es simple: que puedas hacerte una idea rápida de quién soy,
               cómo pienso, qué estoy construyendo y qué energía tengo.{" "}
-              <span style={{ color: "#FFFFFF" }}>Si no, todo bien.</span>
+              <span style={{ color: "#FFFFFF" }}>Si no, está bien.</span>
             </p>
           </div>
 

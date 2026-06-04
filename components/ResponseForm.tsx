@@ -32,7 +32,7 @@ const WANTS_CONTACT: { value: WantsContact; label: string }[] = [
   { value: "yes_instagram", label: "Sí, te dejo mi Instagram" },
   { value: "yes",           label: "Sí, te dejo una forma de contacto" },
   { value: "maybe",         label: "Mejor te dejo una nota" },
-  { value: "no",            label: "Por ahora no, todo bien" },
+  { value: "no",            label: "Por ahora no, está bien" },
 ];
 
 const ALTERNATE_INTENTS: { value: AlternateIntent; label: string }[] = [
@@ -292,7 +292,7 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
           <p className="text-[14px]" style={{ color: "var(--t3)" }}>
             {referrerName
               ? `${referrerName} abrió la puerta, pero la respuesta es completamente tuya.`
-              : "Sin presión. La idea es que responder se sienta fácil, no como trámite."}
+              : "La idea es que responder se sienta fácil, no como trámite."}
           </p>
         </div>
 
@@ -322,7 +322,7 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
 
           {/* Paso 2 — Modo de contacto */}
           {step >= 2 && isOpen(feeling) && (<>
-            <Divider label="sin hacerlo raro" />
+            <Divider label="si algún día hablamos" />
             <div id="response-step-2" className="flex flex-col gap-3 scroll-mt-24">
               <Q>Si algún día habláramos, ¿qué se sentiría más natural para ti?</Q>
               <div className="flex flex-col gap-2">
@@ -358,7 +358,7 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
 
           {/* Paso 4 — Alternativa si no hay match */}
           {step >= 4 && feeling === "no_fit" && (<>
-            <Divider label="sin presión, otra lectura" />
+            <Divider label="otra lectura" />
             <div id="response-step-4" className="flex flex-col gap-3 scroll-mt-24">
               <Q>Si no lo ves por ese lado, ¿hay otra forma en la que sí tendría sentido conectar?</Q>
               <p className="text-sm leading-relaxed" style={{ color: "#FFFFFF" }}>
@@ -491,7 +491,7 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
                     <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                     Enviando…
                   </span>
-                ) : "Enviar sin hacerlo raro"}
+                ) : "Enviar respuesta"}
               </button>
             </div>
           )}

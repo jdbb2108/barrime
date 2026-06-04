@@ -11,7 +11,7 @@ export const referrers: ReferrersMap = {
     name: "Laura",
     relationship: "amiga",
     customNote:
-      "Laura pensó que valía la pena que llegaras hasta aquí. No como presión, más como una pequeña señal de confianza.",
+      "Laura cree que aquí podría haber una buena conversación o, mínimo, una curiosidad bien puesta.",
   },
   // Agrega más personas aquí según sea necesario:
   // andres: {
@@ -29,11 +29,9 @@ export function getReferrer(slug: string | undefined) {
   if (normalized.startsWith("ig")) return null;
 
   return {
-    name: slug
-      .replace(/[-_]+/g, " ")
-      .replace(/\b\w/g, (letter) => letter.toUpperCase()),
+    name: "alguien en común",
     relationship: "referido",
     customNote:
-      "Alguien te compartió esto con intención. No significa que tengas que responder nada; solo que llegaste por una puerta un poquito más humana que un link suelto.",
+      "Alguien en común cree que hay cositas. Puede que sí, puede que no; por eso esta vuelta existe.",
   };
 }

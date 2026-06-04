@@ -6,26 +6,26 @@ const copy = {
   open: {
     icon: "😏",
     title: "Listo, señal recibida.",
-    body: "José la leyó en su mente antes de leerla en la base de datos. Si dejaste contacto, te escribe una sola vez. Sin intensidad rara.",
-    footer: "Puedes cerrar esto y seguir con tu vida de protagonista.",
+    body: "Gracias por responder. Si dejaste contacto, José te escribe una vez y ya vemos si la conversación tiene vida propia.",
+    footer: "Buen movimiento. Bastante elegante para una página tan poco normal.",
   },
   friendship: {
     icon: "🤝",
     title: "Eso cuenta como buena vibra.",
-    body: "Si dejaste contacto, José aparece una vez. No como notificación intensa, más como persona normal intentando no dañarla.",
-    footer: "Buen cierre. Cero drama. Bastante digno.",
+    body: "Gracias por responder con claridad. Si dejaste contacto, José te escribe y miramos si hay conversación, amistad o una de esas conexiones difíciles de explicar.",
+    footer: "Nada mal. La vuelta terminó mejor de lo que empezó.",
   },
   project: {
     icon: "💡",
     title: "Proyecto en el radar.",
-    body: "Si dejaste contacto, José te escribe para entender qué estás construyendo. Promete no llegar con pitch de tiburón de televisión.",
-    footer: "Que ese sueño no se quede guardado en notas del celular.",
+    body: "Gracias por compartirlo. Si dejaste contacto, José te escribe para entender mejor qué estás construyendo y por dónde se puede pensar.",
+    footer: "Ojalá ese sueño no se quede viviendo en una nota del celular.",
   },
   pass: {
     icon: "🫡",
     title: "Respuesta respetada.",
-    body: "Gracias por llegar hasta aquí. No hubo match, pero al menos esta página tuvo presupuesto emocional.",
-    footer: "Puedes irte en paz. El botón invisible de salida eres tú.",
+    body: "Gracias por llegar hasta aquí y responder con honestidad. Si no te hizo sentido, está bien.",
+    footer: "Puedes cerrar esto con tranquilidad. Igual fue una buena anécdota.",
   },
 };
 
