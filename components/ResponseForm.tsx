@@ -7,39 +7,40 @@ import type { Feeling, ContactMethod, WantsContact, AlternateIntent } from "@/ty
 interface Props {
   refSlug?: string;
   source?: string;
+  referrerName?: string;
 }
 
 type Step = 1 | 2 | 3 | 4 | 5;
 
 const FEELINGS: { value: Feeling; label: string; emoji: string }[] = [
   { value: "curious",              label: "Sí, me dio curiosidad",              emoji: "✨" },
-  { value: "nice",                 label: "Tal vez, me pareció interesante",    emoji: "🌸" },
-  { value: "weird_but_interesting",label: "Me pareció raro, pero en el buen sentido", emoji: "🤔" },
-  { value: "no_fit",               label: "No, gracias. Responder directamente", emoji: "🙏" },
-  { value: "thinking",             label: "Prefiero pensarlo",                  emoji: "💭" },
+  { value: "nice",                 label: "Me cayó bien la energía",            emoji: "🙂" },
+  { value: "weird_but_interesting",label: "Raro, pero en el buen sentido",       emoji: "🤔" },
+  { value: "no_fit",               label: "No lo veo, pero respondo con cariño", emoji: "🙏" },
+  { value: "thinking",             label: "Lo pensaría con calma",              emoji: "💭" },
 ];
 
 const CONTACT_METHODS: { value: ContactMethod; label: string; emoji: string }[] = [
   { value: "instagram", label: "Instagram primero",  emoji: "📱" },
-  { value: "coffee",    label: "Un café",            emoji: "☕" },
+  { value: "coffee",    label: "Un café tranquilo",  emoji: "☕" },
   { value: "gym",       label: "Entrenar en gimnasio", emoji: "🏋️" },
-  { value: "other",     label: "Otro plan",          emoji: "💡" },
-  { value: "thinking",  label: "Prefiero pensarlo",  emoji: "💭" },
+  { value: "other",     label: "Algo más espontáneo", emoji: "💡" },
+  { value: "thinking",  label: "Primero lo pensaría", emoji: "💭" },
 ];
 
 const WANTS_CONTACT: { value: WantsContact; label: string }[] = [
   { value: "yes_instagram", label: "Sí, te dejo mi Instagram" },
   { value: "yes",           label: "Sí, te dejo una forma de contacto" },
-  { value: "maybe",         label: "Tal vez, prefiero dejar una nota" },
-  { value: "no",            label: "No por ahora" },
+  { value: "maybe",         label: "Mejor te dejo una nota" },
+  { value: "no",            label: "Por ahora no, todo bien" },
 ];
 
 const ALTERNATE_INTENTS: { value: AlternateIntent; label: string }[] = [
-  { value: "friendship", label: "Sí, me caíste bien y podría haber amistad" },
+  { value: "friendship", label: "Me caíste bien, podría haber amistad" },
   { value: "business", label: "Tengo una empresa o proyecto" },
-  { value: "idea", label: "Tengo una idea que estoy construyendo" },
-  { value: "conversation", label: "Podría haber una conversación interesante" },
-  { value: "no", label: "No por ahora, pero gracias" },
+  { value: "idea", label: "Tengo una idea que estoy armando" },
+  { value: "conversation", label: "Podría salir una conversación buena" },
+  { value: "no", label: "No por ahora, pero gracias de verdad" },
 ];
 
 function isOpen(f: Feeling | "") {
@@ -143,7 +144,7 @@ function Divider({ label }: { label: string }) {
   );
 }
 
-export default function ResponseForm({ refSlug, source }: Props) {
+export default function ResponseForm({ refSlug, source, referrerName }: Props) {
   const router = useRouter();
   const formRef = useRef<HTMLElement>(null);
 
@@ -284,12 +285,14 @@ export default function ResponseForm({ refSlug, source }: Props) {
       <div className="max-w-reading mx-auto flex flex-col gap-5">
 
         <div className="flex flex-col gap-2">
-          <p className="section-label">Decisión simple</p>
+          <p className="section-label">tu turno</p>
           <h2 className="text-xl font-semibold leading-snug" style={{ color: "#FFFFFF" }}>
-            Después de leer esto, ¿te hace sentido seguir conversando?
+            Si llegaste hasta aquí, cuéntame qué te dejó esto.
           </h2>
           <p className="text-[14px]" style={{ color: "var(--t3)" }}>
-            Sin presión. Cualquier respuesta está bien.
+            {referrerName
+              ? `${referrerName} abrió la puerta, pero la respuesta es completamente tuya.`
+              : "Sin presión. La idea es que responder se sienta fácil, no como trámite."}
           </p>
         </div>
 
@@ -297,7 +300,7 @@ export default function ResponseForm({ refSlug, source }: Props) {
 
           {/* Paso 1 — Sensación */}
           <div id="response-step-1" className="flex flex-col gap-3 scroll-mt-24">
-            <Q>Después de ver esto, ¿qué sensación te quedó?</Q>
+            <Q>Primero lo honesto: ¿qué sensación te quedó?</Q>
             <div className="flex flex-col gap-2">
               {FEELINGS.map(f => (
                 <Opt key={f.value} selected={feeling === f.value} emoji={f.emoji}
@@ -319,9 +322,9 @@ export default function ResponseForm({ refSlug, source }: Props) {
 
           {/* Paso 2 — Modo de contacto */}
           {step >= 2 && isOpen(feeling) && (<>
-            <Divider label="si habláramos" />
+            <Divider label="sin hacerlo raro" />
             <div id="response-step-2" className="flex flex-col gap-3 scroll-mt-24">
-              <Q>¿Qué te haría sentir más cómoda?</Q>
+              <Q>Si algún día habláramos, ¿qué se sentiría más natural para ti?</Q>
               <div className="flex flex-col gap-2">
                 {CONTACT_METHODS.map(m => (
                   <Opt key={m.value} selected={contactMethod === m.value} emoji={m.emoji}
@@ -335,12 +338,12 @@ export default function ResponseForm({ refSlug, source }: Props) {
 
           {/* Paso 3 — Señal */}
           {step >= 3 && isOpen(feeling) && (<>
-            <Divider label="contacto" />
+            <Divider label="si quieres dejar puerta abierta" />
             <div id="response-step-3" className="flex flex-col gap-3 scroll-mt-24">
-              <Q>¿Quieres dejarme una señal?</Q>
+              <Q>¿Quieres dejarme una forma sencilla de encontrarte?</Q>
               <p className="text-sm leading-relaxed" style={{ color: "#FFFFFF" }}>
-                Puedes dejar tu Instagram o una forma de contacto si te nace. No tienes
-                que hacerlo.
+                Puede ser Instagram, una nota o nada. De verdad no tienes que forzar
+                una respuesta para que esto haya valido la pena.
               </p>
               <div className="grid grid-cols-2 gap-2">
                 {WANTS_CONTACT.map(w => (
@@ -355,12 +358,12 @@ export default function ResponseForm({ refSlug, source }: Props) {
 
           {/* Paso 4 — Alternativa si no hay match */}
           {step >= 4 && feeling === "no_fit" && (<>
-            <Divider label="otra puerta" />
+            <Divider label="sin presión, otra lectura" />
             <div id="response-step-4" className="flex flex-col gap-3 scroll-mt-24">
-              <Q>Aunque no haya match, ¿te haría sentido conectar desde otro lugar?</Q>
+              <Q>Si no lo ves por ese lado, ¿hay otra forma en la que sí tendría sentido conectar?</Q>
               <p className="text-sm leading-relaxed" style={{ color: "#FFFFFF" }}>
-                También me interesa conocer personas interesantes, hacer amistades reales
-                y conversar con gente que esté construyendo algo.
+                A veces no hay match romántico y aun así puede haber una buena conversación,
+                una amistad bonita o una idea que valga la pena escuchar.
               </p>
               <div className="flex flex-col gap-2">
                 {ALTERNATE_INTENTS.map(intent => (
@@ -386,8 +389,8 @@ export default function ResponseForm({ refSlug, source }: Props) {
           {/* Paso 5 — Proyecto o contacto */}
           {step >= 5 && ["business", "idea"].includes(alternateIntent) && (
             <div id="response-step-5" className="flex flex-col gap-4 scroll-mt-24">
-              <Divider label="proyecto" />
-              <Q>Cuéntame rápido qué estás construyendo.</Q>
+              <Divider label="lo que estás armando" />
+              <Q>Cuéntame rápido qué estás construyendo. Sin pitch perfecto.</Q>
               <input
                 type="text"
                 value={projectName}
@@ -414,7 +417,7 @@ export default function ResponseForm({ refSlug, source }: Props) {
 
           {step >= 5 && (isOpen(feeling) || ["friendship", "conversation", "business", "idea"].includes(alternateIntent)) && (
             <div id={!["business", "idea"].includes(alternateIntent) ? "response-step-5" : undefined} className="flex flex-col gap-3 scroll-mt-24">
-              <Q>Instagram o forma de contacto.</Q>
+              <Q>¿Dónde podría escribirte si tiene sentido?</Q>
               <input
                 type="text"
                 value={contactValue}
@@ -428,16 +431,16 @@ export default function ResponseForm({ refSlug, source }: Props) {
 
           {/* Nota opcional */}
           {step >= 5 && (<>
-            <Divider label="opcional" />
+            <Divider label="lo que quieras sumar" />
             <div className="flex flex-col gap-3">
               <div className="flex justify-between items-center">
-                <Q>Déjame una nota si quieres.</Q>
+                <Q>Si quieres, déjame una última frase con tu tono.</Q>
                 <span className="text-xs" style={{ color: "var(--t3)" }}>{note.length}/500</span>
               </div>
               <textarea
                 value={note}
                 onChange={e => setNote(e.target.value.slice(0, 500))}
-                placeholder="Lo que quieras…"
+                placeholder="Algo que te haya dado risa, duda, curiosidad o cero ganas. Todo sirve."
                 rows={3}
                 className="input-base resize-none"
               />
@@ -488,7 +491,7 @@ export default function ResponseForm({ refSlug, source }: Props) {
                     <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                     Enviando…
                   </span>
-                ) : "Enviar señal"}
+                ) : "Enviar sin hacerlo raro"}
               </button>
             </div>
           )}

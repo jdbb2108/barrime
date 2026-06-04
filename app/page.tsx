@@ -151,7 +151,7 @@ function LandingContent() {
 
       {/* 7. Formulario — Decisión simple */}
       <div ref={formRef}>
-        <ResponseForm refSlug={refSlug} source={source} />
+        <ResponseForm refSlug={refSlug} source={source} referrerName={referrer?.name} />
       </div>
 
       <Footer />
