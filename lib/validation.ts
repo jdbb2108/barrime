@@ -19,6 +19,20 @@ const VALID_CONTACT_METHODS = [
 ];
 
 const VALID_WANTS_CONTACT = ["yes", "yes_instagram", "maybe", "no"];
+const VALID_RELATIONSHIP_STATUS = [
+  "single",
+  "meeting_someone",
+  "unclear",
+  "relationship",
+  "prefer_not_say",
+];
+const VALID_OPENNESS = [
+  "open",
+  "depends",
+  "friendship",
+  "not_now",
+  "figuring_out",
+];
 const VALID_ALTERNATE_INTENTS = [
   "friendship",
   "business",
@@ -40,6 +54,17 @@ export function validateResponse(body: ResponsePayloadRaw): ValidationError[] {
     errors.push({ field: "feeling", message: "Este campo es obligatorio." });
   } else if (!VALID_FEELINGS.includes(body.feeling)) {
     errors.push({ field: "feeling", message: "Respuesta no válida." });
+  }
+
+  if (
+    body.relationshipStatus &&
+    !VALID_RELATIONSHIP_STATUS.includes(body.relationshipStatus)
+  ) {
+    errors.push({ field: "relationshipStatus", message: "Opción no válida." });
+  }
+
+  if (body.openness && !VALID_OPENNESS.includes(body.openness)) {
+    errors.push({ field: "openness", message: "Opción no válida." });
   }
 
   // preferredContactMethod — opcional pero debe ser válido si se envía

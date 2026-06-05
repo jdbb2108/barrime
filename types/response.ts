@@ -14,6 +14,20 @@ export type ContactMethod =
 
 export type WantsContact = "yes" | "yes_instagram" | "maybe" | "no";
 
+export type RelationshipStatus =
+  | "single"
+  | "meeting_someone"
+  | "unclear"
+  | "relationship"
+  | "prefer_not_say";
+
+export type Openness =
+  | "open"
+  | "depends"
+  | "friendship"
+  | "not_now"
+  | "figuring_out";
+
 export type AlternateIntent =
   | "friendship"
   | "business"
@@ -25,6 +39,8 @@ export interface ResponsePayload {
   refSlug?: string;
   source?: "friend" | "instagram" | "direct" | "unknown";
   feeling: Feeling;
+  relationshipStatus?: RelationshipStatus;
+  openness?: Openness;
   preferredContactMethod?: ContactMethod;
   wantsContact?: WantsContact;
   alternateIntent?: AlternateIntent;
@@ -40,6 +56,8 @@ export interface ResponsePayloadRaw {
   refSlug?: string;
   source?: string;
   feeling?: string;
+  relationshipStatus?: string;
+  openness?: string;
   preferredContactMethod?: string;
   wantsContact?: string;
   alternateIntent?: string;

@@ -2,7 +2,14 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Feeling, ContactMethod, WantsContact, AlternateIntent } from "@/types/response";
+import type {
+  Feeling,
+  ContactMethod,
+  WantsContact,
+  AlternateIntent,
+  RelationshipStatus,
+  Openness,
+} from "@/types/response";
 
 interface Props {
   refSlug?: string;
@@ -10,7 +17,7 @@ interface Props {
   referrerName?: string;
 }
 
-type Step = 1 | 2 | 3 | 4 | 5;
+type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 const FEELINGS: { value: Feeling; label: string; emoji: string }[] = [
   { value: "curious",              label: "Sí, me dio curiosidad",              emoji: "✨" },
@@ -26,6 +33,22 @@ const CONTACT_METHODS: { value: ContactMethod; label: string; emoji: string }[] 
   { value: "gym",       label: "Entrenar en gimnasio", emoji: "🏋️" },
   { value: "other",     label: "Algo más espontáneo", emoji: "💡" },
   { value: "thinking",  label: "Primero lo pensaría", emoji: "💭" },
+];
+
+const RELATIONSHIP_STATUSES: { value: RelationshipStatus; label: string }[] = [
+  { value: "single", label: "Estoy soltera" },
+  { value: "meeting_someone", label: "Estoy conociendo a alguien" },
+  { value: "unclear", label: "Estoy en algo, pero no tan claro" },
+  { value: "relationship", label: "Estoy en una relación" },
+  { value: "prefer_not_say", label: "Prefiero no responder eso" },
+];
+
+const OPENNESS_OPTIONS: { value: Openness; label: string }[] = [
+  { value: "open", label: "Sí estoy abierta" },
+  { value: "depends", label: "Depende mucho de la persona" },
+  { value: "friendship", label: "Más amistad/conversación que otra cosa" },
+  { value: "not_now", label: "Ahora mismo no estoy buscando nada" },
+  { value: "figuring_out", label: "No sé, estoy viendo" },
 ];
 
 const WANTS_CONTACT: { value: WantsContact; label: string }[] = [
@@ -81,6 +104,8 @@ const stepAnchors: Record<Step, string> = {
   3: "response-step-3",
   4: "response-step-4",
   5: "response-step-5",
+  6: "response-step-6",
+  7: "response-step-7",
 };
 
 function Q({ children }: { children: React.ReactNode }) {
@@ -150,6 +175,8 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
 
   const [step, setStep]                 = useState<Step>(1);
   const [feeling, setFeeling]           = useState<Feeling | "">("");
+  const [relationshipStatus, setRelationshipStatus] = useState<RelationshipStatus | "">("");
+  const [openness, setOpenness] = useState<Openness | "">("");
   const [contactMethod, setContactMethod] = useState<ContactMethod | "">("");
   const [wContact, setWContact]         = useState<WantsContact | "">("");
   const [alternateIntent, setAlternateIntent] = useState<AlternateIntent | "">("");
@@ -179,6 +206,8 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
 
   async function submit(overrides?: {
     feeling?: Feeling;
+    relationshipStatus?: RelationshipStatus;
+    openness?: Openness;
     preferredContactMethod?: ContactMethod;
     wantsContact?: WantsContact;
     alternateIntent?: AlternateIntent;
@@ -193,6 +222,8 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
     setServerError("");
 
     const finalFeeling = overrides?.feeling ?? feeling;
+    const finalRelationshipStatus = overrides?.relationshipStatus ?? relationshipStatus;
+    const finalOpenness = overrides?.openness ?? openness;
     const finalContactMethod = overrides?.preferredContactMethod ?? contactMethod;
     const finalWantsContact = overrides?.wantsContact ?? wContact;
     const finalAlternateIntent = overrides?.alternateIntent ?? alternateIntent;
@@ -227,6 +258,8 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
           refSlug: refSlug ?? undefined,
           source: source ?? "unknown",
           feeling: finalFeeling,
+          relationshipStatus: finalRelationshipStatus || undefined,
+          openness: finalOpenness || undefined,
           preferredContactMethod: finalContactMethod || undefined,
           wantsContact: finalWantsContact || undefined,
           alternateIntent: finalAlternateIntent || undefined,
@@ -302,12 +335,12 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
                   onClick={() => {
                     if (f.value === "no_fit") {
                       setFeeling(f.value);
-                      if (step === 1) next(4);
+                      if (step === 1) next(6);
                       return;
                     }
 
                     setFeeling(f.value);
-                    if (step === 1) next(isOpen(f.value) ? 2 : 4);
+                    if (step === 1) next(isOpen(f.value) ? 2 : 6);
                   }}>
                   {f.label}
                 </Opt>
@@ -315,15 +348,47 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
             </div>
           </div>
 
-          {/* Paso 2 — Modo de contacto */}
+          {/* Paso 2 — Situación relacional */}
           {step >= 2 && isOpen(feeling) && (<>
-            <Divider label="si algún día hablamos" />
+            <Divider label="contexto real" />
             <div id="response-step-2" className="flex flex-col gap-3 scroll-mt-24">
+              <Q>Para entender mejor el contexto, ¿desde dónde estás leyendo esto?</Q>
+              <div className="flex flex-col gap-2">
+                {RELATIONSHIP_STATUSES.map(option => (
+                  <Opt key={option.value} selected={relationshipStatus === option.value}
+                    onClick={() => { setRelationshipStatus(option.value); if (step === 2) next(3); }}>
+                    {option.label}
+                  </Opt>
+                ))}
+              </div>
+            </div>
+          </>)}
+
+          {/* Paso 3 — Apertura */}
+          {step >= 3 && isOpen(feeling) && (<>
+            <Divider label="apertura" />
+            <div id="response-step-3" className="flex flex-col gap-3 scroll-mt-24">
+              <Q>Y siendo honesta, ¿qué tan abierta estás a conocer a alguien en este momento?</Q>
+              <div className="flex flex-col gap-2">
+                {OPENNESS_OPTIONS.map(option => (
+                  <Opt key={option.value} selected={openness === option.value}
+                    onClick={() => { setOpenness(option.value); if (step === 3) next(4); }}>
+                    {option.label}
+                  </Opt>
+                ))}
+              </div>
+            </div>
+          </>)}
+
+          {/* Paso 4 — Modo de contacto */}
+          {step >= 4 && isOpen(feeling) && (<>
+            <Divider label="si algún día hablamos" />
+            <div id="response-step-4" className="flex flex-col gap-3 scroll-mt-24">
               <Q>Si algún día habláramos, ¿qué se sentiría más natural para ti?</Q>
               <div className="flex flex-col gap-2">
                 {CONTACT_METHODS.map(m => (
                   <Opt key={m.value} selected={contactMethod === m.value} emoji={m.emoji}
-                    onClick={() => { setContactMethod(m.value); if (step === 2) next(3); }}>
+                    onClick={() => { setContactMethod(m.value); if (step === 4) next(5); }}>
                     {m.label}
                   </Opt>
                 ))}
@@ -331,10 +396,10 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
             </div>
           </>)}
 
-          {/* Paso 3 — Señal */}
-          {step >= 3 && isOpen(feeling) && (<>
+          {/* Paso 5 — Señal */}
+          {step >= 5 && isOpen(feeling) && (<>
             <Divider label="si quieres dejar puerta abierta" />
-            <div id="response-step-3" className="flex flex-col gap-3 scroll-mt-24">
+            <div id="response-step-5" className="flex flex-col gap-3 scroll-mt-24">
               <Q>¿Quieres dejarme una forma sencilla de encontrarte?</Q>
               <p className="text-sm leading-relaxed" style={{ color: "#FFFFFF" }}>
                 Puede ser Instagram, una nota o nada. De verdad no tienes que forzar
@@ -343,7 +408,7 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
               <div className="grid grid-cols-2 gap-2">
                 {WANTS_CONTACT.map(w => (
                   <Opt key={w.value} selected={wContact === w.value}
-                    onClick={() => { setWContact(w.value); if (step === 3) next(5); }}>
+                    onClick={() => { setWContact(w.value); if (step === 5) next(7); }}>
                     {w.label}
                   </Opt>
                 ))}
@@ -352,9 +417,9 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
           </>)}
 
           {/* Paso 4 — Alternativa si no hay match */}
-          {step >= 4 && feeling === "no_fit" && (<>
+          {step >= 6 && feeling === "no_fit" && (<>
             <Divider label="otra lectura" />
-            <div id="response-step-4" className="flex flex-col gap-3 scroll-mt-24">
+            <div id="response-step-6" className="flex flex-col gap-3 scroll-mt-24">
               <Q>Si no lo ves por ese lado, ¿hay otra forma en la que sí tendría sentido conectar?</Q>
               <p className="text-sm leading-relaxed" style={{ color: "#FFFFFF" }}>
                 A veces no hay match romántico y aun así puede haber una buena conversación,
@@ -371,7 +436,7 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
                         submitDirectNo();
                         return;
                       }
-                      if (step === 4) next(5);
+                      if (step === 6) next(7);
                     }}
                   >
                     {intent.label}
@@ -381,9 +446,9 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
             </div>
           </>)}
 
-          {/* Paso 5 — Proyecto o contacto */}
-          {step >= 5 && ["business", "idea"].includes(alternateIntent) && (
-            <div id="response-step-5" className="flex flex-col gap-4 scroll-mt-24">
+          {/* Paso 7 — Proyecto o contacto */}
+          {step >= 7 && ["business", "idea"].includes(alternateIntent) && (
+            <div id="response-step-7" className="flex flex-col gap-4 scroll-mt-24">
               <Divider label="lo que estás armando" />
               <Q>Cuéntame rápido qué estás construyendo. Sin pitch perfecto.</Q>
               <input
@@ -410,8 +475,8 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
             </div>
           )}
 
-          {step >= 5 && (isOpen(feeling) || ["friendship", "conversation", "business", "idea"].includes(alternateIntent)) && (
-            <div id={!["business", "idea"].includes(alternateIntent) ? "response-step-5" : undefined} className="flex flex-col gap-3 scroll-mt-24">
+          {step >= 7 && (isOpen(feeling) || ["friendship", "conversation", "business", "idea"].includes(alternateIntent)) && (
+            <div id={!["business", "idea"].includes(alternateIntent) ? "response-step-7" : undefined} className="flex flex-col gap-3 scroll-mt-24">
               <Q>¿Dónde podría escribirte si tiene sentido?</Q>
               <input
                 type="text"
@@ -425,7 +490,7 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
           )}
 
           {/* Nota opcional */}
-          {step >= 5 && (<>
+          {step >= 7 && (<>
             <Divider label="lo que quieras sumar" />
             <div className="flex flex-col gap-3">
               <div className="flex justify-between items-center">
@@ -443,7 +508,7 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
           </>)}
 
           {/* Consentimiento */}
-          {step >= 5 && (
+          {step >= 7 && (
             <label
               className="flex gap-3 items-start cursor-pointer p-4 rounded-2xl"
               style={{
@@ -473,7 +538,7 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
           )}
 
           {/* Botones de acción */}
-          {step >= 5 && (
+          {step >= 7 && (
             <div className="flex flex-col sm:flex-row gap-3 pt-1">
               <button
                 type="button"
