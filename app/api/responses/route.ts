@@ -94,8 +94,12 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     console.error("[api/responses] Error guardando en Sheets:", err);
     return NextResponse.json(
-      { ok: true, saved: false, warning: "sheets_append_failed" },
-      { status: 200 }
+      {
+        error: "No se pudo guardar en Sheets. Revisa las variables de Google en Vercel.",
+        saved: false,
+        warning: "sheets_append_failed",
+      },
+      { status: 500 }
     );
   }
 

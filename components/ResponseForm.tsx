@@ -241,11 +241,6 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        const errorText = String(data?.error ?? "");
-        if (errorText.toLowerCase().includes("guardar")) {
-          router.push(`/gracias?intent=${intent}`);
-          return;
-        }
         setServerError(data?.error ?? "Revisa la respuesta e intenta de nuevo.");
         setSubmitting(false);
         return;
