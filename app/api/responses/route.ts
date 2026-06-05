@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { appendRow } from "@/lib/googleSheets";
+import { appendRow, updateRange } from "@/lib/googleSheets";
 import { validateResponse } from "@/lib/validation";
 import { checkRateLimit } from "@/lib/rateLimit";
 import { sanitizeText, getClientIp, nowISO } from "@/lib/utils";
@@ -12,6 +12,24 @@ function getResponsesRange() {
   // Older deployments used A:K. The current payload writes 15 columns.
   return configured.replace(/!A:K$/i, "!A:O");
 }
+
+const RESPONSE_HEADERS = [
+  "created_at",
+  "ref_slug",
+  "source",
+  "feeling",
+  "preferred_contact_method",
+  "wants_contact",
+  "alternate_intent",
+  "contact_value",
+  "project_name",
+  "project_stage",
+  "project_challenge",
+  "note",
+  "consent",
+  "status",
+  "user_agent",
+];
 
 export async function POST(request: NextRequest) {
   // 1. Rate limiting — la IP nunca se guarda en Sheets
@@ -71,6 +89,7 @@ export async function POST(request: NextRequest) {
   ];
 
   try {
+    await updateRange("Responses!A1:O1", [RESPONSE_HEADERS]);
     await appendRow(getResponsesRange(), row);
   } catch (err) {
     console.error("[api/responses] Error guardando en Sheets:", err);
