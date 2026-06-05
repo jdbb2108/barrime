@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const ACCESS_COOKIE = "barri_access";
+const DEFAULT_ACCESS_CODE = "210801";
 const PUBLIC_FILE = /\.(.*)$/;
 
 function isPublicPath(pathname: string) {
@@ -16,9 +17,9 @@ function isPublicPath(pathname: string) {
 }
 
 export function middleware(request: NextRequest) {
-  const accessCode = process.env.ACCESS_CODE ?? process.env.ADMIN_PASSWORD;
+  const accessCode = process.env.ACCESS_CODE ?? DEFAULT_ACCESS_CODE;
 
-  if (!accessCode || isPublicPath(request.nextUrl.pathname)) {
+  if (isPublicPath(request.nextUrl.pathname)) {
     return NextResponse.next();
   }
 

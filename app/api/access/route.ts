@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const ACCESS_COOKIE = "barri_access";
+const DEFAULT_ACCESS_CODE = "210801";
 
 export async function POST(request: NextRequest) {
-  const accessCode = process.env.ACCESS_CODE ?? process.env.ADMIN_PASSWORD;
-
-  if (!accessCode) {
-    return NextResponse.json({ ok: true }, { status: 200 });
-  }
+  const accessCode = process.env.ACCESS_CODE ?? DEFAULT_ACCESS_CODE;
 
   let body: { code?: string };
   try {
