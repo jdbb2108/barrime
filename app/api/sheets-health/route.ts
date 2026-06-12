@@ -28,7 +28,7 @@ export async function GET() {
     spreadsheetId: {
       present: Boolean(process.env.GOOGLE_SHEETS_SPREADSHEET_ID),
     },
-    responsesRange: process.env.GOOGLE_SHEETS_RESPONSES_RANGE ?? "Responses!A:Q",
+    responsesRange: process.env.GOOGLE_SHEETS_RESPONSES_RANGE ?? "Responses!A:R",
     visitsRange: process.env.GOOGLE_SHEETS_VISITS_RANGE ?? "Visits!A:E",
     privateKey: {
       present: privateKey.present,
@@ -52,7 +52,7 @@ export async function GET() {
     const sheets = google.sheets({ version: "v4", auth });
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId: process.env.GOOGLE_SHEETS_SPREADSHEET_ID,
-      range: "Responses!A1:Q1",
+      range: "Responses!A1:R1",
     });
 
     return NextResponse.json({

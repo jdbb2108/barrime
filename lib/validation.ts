@@ -49,6 +49,12 @@ export interface ValidationError {
 export function validateResponse(body: ResponsePayloadRaw): ValidationError[] {
   const errors: ValidationError[] = [];
 
+  if (!body.respondentName?.trim()) {
+    errors.push({ field: "respondentName", message: "Deja tu nombre antes de enviar." });
+  } else if (body.respondentName.length > 80) {
+    errors.push({ field: "respondentName", message: "Máximo 80 caracteres." });
+  }
+
   // feeling es obligatorio
   if (!body.feeling) {
     errors.push({ field: "feeling", message: "Este campo es obligatorio." });

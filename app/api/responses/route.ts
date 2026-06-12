@@ -7,16 +7,17 @@ import type { ResponsePayloadRaw } from "@/types/response";
 
 function getResponsesRange() {
   const configured = process.env.GOOGLE_SHEETS_RESPONSES_RANGE;
-  if (!configured) return "Responses!A:Q";
+  if (!configured) return "Responses!A:R";
 
-  // Older deployments used A:K/A:O. The current payload writes 17 columns.
-  return configured.replace(/!A:(K|O)$/i, "!A:Q");
+  // Older deployments used A:K/A:O/A:Q. The current payload writes 18 columns.
+  return configured.replace(/!A:(K|O|Q)$/i, "!A:R");
 }
 
 const RESPONSE_HEADERS = [
   "created_at",
   "ref_slug",
   "source",
+  "respondent_name",
   "feeling",
   "relationship_status",
   "openness",
@@ -62,6 +63,7 @@ export async function POST(request: NextRequest) {
   }
 
   // 4. Sanitizar texto libre
+  const respondentName = sanitizeText(body.respondentName);
   const note = sanitizeText(body.note);
   const contactValue = sanitizeText(body.contactValue);
   const projectName = sanitizeText(body.projectName);
@@ -73,6 +75,7 @@ export async function POST(request: NextRequest) {
     nowISO(),
     body.refSlug ?? "",
     body.source ?? "unknown",
+    respondentName,
     body.feeling ?? "",
     body.relationshipStatus ?? "",
     body.openness ?? "",
@@ -90,7 +93,7 @@ export async function POST(request: NextRequest) {
   ];
 
   try {
-    await updateRange("Responses!A1:Q1", [RESPONSE_HEADERS]);
+    await updateRange("Responses!A1:R1", [RESPONSE_HEADERS]);
     await appendRow(getResponsesRange(), row);
   } catch (err) {
     console.error("[api/responses] Error guardando en Sheets:", err);

@@ -17,7 +17,7 @@ interface Props {
   referrerName?: string;
 }
 
-type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 const FEELINGS: { value: Feeling; label: string; emoji: string }[] = [
   { value: "curious",              label: "Sí, me dio curiosidad",              emoji: "✨" },
@@ -106,6 +106,7 @@ const stepAnchors: Record<Step, string> = {
   5: "response-step-5",
   6: "response-step-6",
   7: "response-step-7",
+  8: "response-step-8",
 };
 
 function Q({ children }: { children: React.ReactNode }) {
@@ -174,6 +175,7 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
   const formRef = useRef<HTMLElement>(null);
 
   const [step, setStep]                 = useState<Step>(1);
+  const [respondentName, setRespondentName] = useState("");
   const [feeling, setFeeling]           = useState<Feeling | "">("");
   const [relationshipStatus, setRelationshipStatus] = useState<RelationshipStatus | "">("");
   const [openness, setOpenness] = useState<Openness | "">("");
@@ -205,6 +207,7 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
   }
 
   async function submit(overrides?: {
+    respondentName?: string;
     feeling?: Feeling;
     relationshipStatus?: RelationshipStatus;
     openness?: Openness;
@@ -221,6 +224,7 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
     setSubmitting(true);
     setServerError("");
 
+    const finalRespondentName = overrides?.respondentName ?? respondentName.trim();
     const finalFeeling = overrides?.feeling ?? feeling;
     const finalRelationshipStatus = overrides?.relationshipStatus ?? relationshipStatus;
     const finalOpenness = overrides?.openness ?? openness;
@@ -257,6 +261,7 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
         body: JSON.stringify({
           refSlug: refSlug ?? undefined,
           source: source ?? "unknown",
+          respondentName: finalRespondentName || undefined,
           feeling: finalFeeling,
           relationshipStatus: finalRelationshipStatus || undefined,
           openness: finalOpenness || undefined,
@@ -326,37 +331,66 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
 
         <div className="card flex flex-col gap-6">
 
-          {/* Paso 1 — Sensación */}
+          {/* Paso 1 — Nombre */}
           <div id="response-step-1" className="flex flex-col gap-3 scroll-mt-24">
-            <Q>Primero lo honesto: ¿qué sensación te quedó?</Q>
-            <div className="flex flex-col gap-2">
-              {FEELINGS.map(f => (
-                <Opt key={f.value} selected={feeling === f.value} emoji={f.emoji}
-                  onClick={() => {
-                    if (f.value === "no_fit") {
-                      setFeeling(f.value);
-                      if (step === 1) next(6);
-                      return;
-                    }
-
-                    setFeeling(f.value);
-                    if (step === 1) next(isOpen(f.value) ? 2 : 6);
-                  }}>
-                  {f.label}
-                </Opt>
-              ))}
+            <Q>Antes de responder: ¿cómo te llamas?</Q>
+            <p className="text-sm leading-relaxed" style={{ color: "#FFFFFF" }}>
+              Es solo para saber quién está escribiendo cuando lea tu respuesta.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                type="text"
+                value={respondentName}
+                onChange={e => setRespondentName(e.target.value.slice(0, 80))}
+                placeholder="Tu nombre"
+                maxLength={80}
+                className="input-base flex-1"
+              />
+              <button
+                type="button"
+                onClick={() => { if (step === 1) next(2); }}
+                disabled={!respondentName.trim()}
+                className="btn-primary sm:w-auto disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Seguir
+              </button>
             </div>
           </div>
 
-          {/* Paso 2 — Situación relacional */}
-          {step >= 2 && isOpen(feeling) && (<>
-            <Divider label="contexto real" />
+          {/* Paso 2 — Sensación */}
+          {step >= 2 && (<>
+            <Divider label="primera impresión" />
             <div id="response-step-2" className="flex flex-col gap-3 scroll-mt-24">
+              <Q>Primero lo honesto: ¿qué sensación te quedó?</Q>
+              <div className="flex flex-col gap-2">
+                {FEELINGS.map(f => (
+                  <Opt key={f.value} selected={feeling === f.value} emoji={f.emoji}
+                    onClick={() => {
+                      if (f.value === "no_fit") {
+                        setFeeling(f.value);
+                        if (step === 2) next(7);
+                        return;
+                      }
+
+                      setFeeling(f.value);
+                      if (step === 2) next(isOpen(f.value) ? 3 : 7);
+                    }}>
+                    {f.label}
+                  </Opt>
+                ))}
+              </div>
+            </div>
+          </>)}
+
+          {/* Paso 3 — Situación relacional */}
+          {step >= 3 && isOpen(feeling) && (<>
+            <Divider label="contexto real" />
+            <div id="response-step-3" className="flex flex-col gap-3 scroll-mt-24">
               <Q>Para entender mejor el contexto, ¿desde dónde estás leyendo esto?</Q>
               <div className="flex flex-col gap-2">
                 {RELATIONSHIP_STATUSES.map(option => (
                   <Opt key={option.value} selected={relationshipStatus === option.value}
-                    onClick={() => { setRelationshipStatus(option.value); if (step === 2) next(3); }}>
+                    onClick={() => { setRelationshipStatus(option.value); if (step === 3) next(4); }}>
                     {option.label}
                   </Opt>
                 ))}
@@ -364,15 +398,15 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
             </div>
           </>)}
 
-          {/* Paso 3 — Apertura */}
-          {step >= 3 && isOpen(feeling) && (<>
+          {/* Paso 4 — Apertura */}
+          {step >= 4 && isOpen(feeling) && (<>
             <Divider label="apertura" />
-            <div id="response-step-3" className="flex flex-col gap-3 scroll-mt-24">
+            <div id="response-step-4" className="flex flex-col gap-3 scroll-mt-24">
               <Q>Y siendo honesta, ¿qué tan abierta estás a conocer a alguien en este momento?</Q>
               <div className="flex flex-col gap-2">
                 {OPENNESS_OPTIONS.map(option => (
                   <Opt key={option.value} selected={openness === option.value}
-                    onClick={() => { setOpenness(option.value); if (step === 3) next(4); }}>
+                    onClick={() => { setOpenness(option.value); if (step === 4) next(5); }}>
                     {option.label}
                   </Opt>
                 ))}
@@ -380,15 +414,15 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
             </div>
           </>)}
 
-          {/* Paso 4 — Modo de contacto */}
-          {step >= 4 && isOpen(feeling) && (<>
+          {/* Paso 5 — Modo de contacto */}
+          {step >= 5 && isOpen(feeling) && (<>
             <Divider label="si algún día hablamos" />
-            <div id="response-step-4" className="flex flex-col gap-3 scroll-mt-24">
+            <div id="response-step-5" className="flex flex-col gap-3 scroll-mt-24">
               <Q>Si algún día habláramos, ¿qué se sentiría más natural para ti?</Q>
               <div className="flex flex-col gap-2">
                 {CONTACT_METHODS.map(m => (
                   <Opt key={m.value} selected={contactMethod === m.value} emoji={m.emoji}
-                    onClick={() => { setContactMethod(m.value); if (step === 4) next(5); }}>
+                    onClick={() => { setContactMethod(m.value); if (step === 5) next(6); }}>
                     {m.label}
                   </Opt>
                 ))}
@@ -396,10 +430,10 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
             </div>
           </>)}
 
-          {/* Paso 5 — Señal */}
-          {step >= 5 && isOpen(feeling) && (<>
+          {/* Paso 6 — Señal */}
+          {step >= 6 && isOpen(feeling) && (<>
             <Divider label="si quieres dejar puerta abierta" />
-            <div id="response-step-5" className="flex flex-col gap-3 scroll-mt-24">
+            <div id="response-step-6" className="flex flex-col gap-3 scroll-mt-24">
               <Q>¿Quieres dejarme una forma sencilla de encontrarte?</Q>
               <p className="text-sm leading-relaxed" style={{ color: "#FFFFFF" }}>
                 Puede ser Instagram, una nota o nada. De verdad no tienes que forzar
@@ -408,7 +442,7 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
               <div className="grid grid-cols-2 gap-2">
                 {WANTS_CONTACT.map(w => (
                   <Opt key={w.value} selected={wContact === w.value}
-                    onClick={() => { setWContact(w.value); if (step === 5) next(7); }}>
+                    onClick={() => { setWContact(w.value); if (step === 6) next(8); }}>
                     {w.label}
                   </Opt>
                 ))}
@@ -416,10 +450,10 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
             </div>
           </>)}
 
-          {/* Paso 4 — Alternativa si no hay match */}
-          {step >= 6 && feeling === "no_fit" && (<>
+          {/* Paso 7 — Alternativa si no hay match */}
+          {step >= 7 && feeling === "no_fit" && (<>
             <Divider label="otra lectura" />
-            <div id="response-step-6" className="flex flex-col gap-3 scroll-mt-24">
+            <div id="response-step-7" className="flex flex-col gap-3 scroll-mt-24">
               <Q>Si no lo ves por ese lado, ¿hay otra forma en la que sí tendría sentido conectar?</Q>
               <p className="text-sm leading-relaxed" style={{ color: "#FFFFFF" }}>
                 A veces no hay match romántico y aun así puede haber una buena conversación,
@@ -436,7 +470,7 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
                         submitDirectNo();
                         return;
                       }
-                      if (step === 6) next(7);
+                      if (step === 7) next(8);
                     }}
                   >
                     {intent.label}
@@ -446,9 +480,9 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
             </div>
           </>)}
 
-          {/* Paso 7 — Proyecto o contacto */}
-          {step >= 7 && ["business", "idea"].includes(alternateIntent) && (
-            <div id="response-step-7" className="flex flex-col gap-4 scroll-mt-24">
+          {/* Paso 8 — Proyecto o contacto */}
+          {step >= 8 && ["business", "idea"].includes(alternateIntent) && (
+            <div id="response-step-8" className="flex flex-col gap-4 scroll-mt-24">
               <Divider label="lo que estás armando" />
               <Q>Cuéntame rápido qué estás construyendo. Sin pitch perfecto.</Q>
               <input
@@ -475,8 +509,8 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
             </div>
           )}
 
-          {step >= 7 && (isOpen(feeling) || ["friendship", "conversation", "business", "idea"].includes(alternateIntent)) && (
-            <div id={!["business", "idea"].includes(alternateIntent) ? "response-step-7" : undefined} className="flex flex-col gap-3 scroll-mt-24">
+          {step >= 8 && (isOpen(feeling) || ["friendship", "conversation", "business", "idea"].includes(alternateIntent)) && (
+            <div id={!["business", "idea"].includes(alternateIntent) ? "response-step-8" : undefined} className="flex flex-col gap-3 scroll-mt-24">
               <Q>¿Dónde podría escribirte si tiene sentido?</Q>
               <input
                 type="text"
@@ -490,7 +524,7 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
           )}
 
           {/* Nota opcional */}
-          {step >= 7 && (<>
+          {step >= 8 && (<>
             <Divider label="lo que quieras sumar" />
             <div className="flex flex-col gap-3">
               <div className="flex justify-between items-center">
@@ -508,7 +542,7 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
           </>)}
 
           {/* Consentimiento */}
-          {step >= 7 && (
+          {step >= 8 && (
             <label
               className="flex gap-3 items-start cursor-pointer p-4 rounded-2xl"
               style={{
@@ -538,12 +572,12 @@ export default function ResponseForm({ refSlug, source, referrerName }: Props) {
           )}
 
           {/* Botones de acción */}
-          {step >= 7 && (
+          {step >= 8 && (
             <div className="flex flex-col sm:flex-row gap-3 pt-1">
               <button
                 type="button"
                 onClick={() => submit()}
-                disabled={submitting || !feeling || (submitNeedsConsent && !consent)}
+                disabled={submitting || !respondentName.trim() || !feeling || (submitNeedsConsent && !consent)}
                 className="flex-1 btn-primary disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {submitting ? (

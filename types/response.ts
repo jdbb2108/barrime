@@ -38,6 +38,7 @@ export type AlternateIntent =
 export interface ResponsePayload {
   refSlug?: string;
   source?: "friend" | "instagram" | "direct" | "unknown";
+  respondentName: string;
   feeling: Feeling;
   relationshipStatus?: RelationshipStatus;
   openness?: Openness;
@@ -55,6 +56,7 @@ export interface ResponsePayload {
 export interface ResponsePayloadRaw {
   refSlug?: string;
   source?: string;
+  respondentName?: string;
   feeling?: string;
   relationshipStatus?: string;
   openness?: string;
